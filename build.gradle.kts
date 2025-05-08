@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 group = "org.openrndr.template"
 version = "1.0.0"
 
-val applicationMainClass = "TemplateProgramKt"
+val applicationMainClass = "MidiVisualizerKt"
 
 /**  ## additional ORX features to be added to this project */
 val orxFeatures = setOf<String>(
@@ -32,13 +32,13 @@ val orxFeatures = setOf<String>(
 //  "orx-integral-image",
 //  "orx-interval-tree",
 //  "orx-jumpflood",
-//  "orx-kdtree",
+  "orx-kdtree",
 //  "orx-keyframer",
 //  "orx-kinect-v1",
 //  "orx-kotlin-parser",
 //  "orx-marching-squares",
 //  "orx-mesh-generators",
-//  "orx-midi",
+    "orx-midi",
 //  "orx-minim",
     "orx-no-clear",
     "orx-noise",
