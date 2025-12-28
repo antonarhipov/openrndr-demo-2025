@@ -592,7 +592,10 @@ fun main() = application {
                     val newCount = when {
                         params.ringCount < 8 -> 12
                         params.ringCount < 16 -> 20
-                        params.ringCount < 25 -> 25
+                        params.ringCount < 21 -> 27
+                        params.ringCount < 30 -> 50
+                        params.ringCount < 51 -> 75
+                        params.ringCount < 76 -> 100
                         else -> 5
                     }
                     params = params.copy(ringCount = newCount)
