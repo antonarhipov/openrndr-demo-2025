@@ -8,12 +8,10 @@ import org.openrndr.draw.*
 import org.openrndr.extra.color.presets.*
 import org.openrndr.extra.shapes.hobbyCurve
 import org.openrndr.extra.triangulation.DelaunayTriangulation
-import org.openrndr.extra.triangulation.VoronoiDiagram
 import org.openrndr.math.Vector2
 import org.openrndr.math.map
 import org.openrndr.shape.Rectangle
 import org.openrndr.shape.ShapeContour
-import org.openrndr.shape.contains
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -24,7 +22,7 @@ enum class DistributionMode {
     UNIFORM, CLUSTERED, GRADIENT
 }
 
-enum class PaletteMode {
+enum class VoronoiPaletteMode {
     AMBER_GOLD, CELLULAR_GREENS
 }
 
@@ -34,7 +32,7 @@ data class VoronoiParams(
     var distributionMode: DistributionMode = DistributionMode.UNIFORM,
     var relaxIters: Int = 3,
     var tension: Double = 0.5,
-    var paletteMode: PaletteMode = PaletteMode.AMBER_GOLD,
+    var paletteMode: VoronoiPaletteMode = VoronoiPaletteMode.AMBER_GOLD,
     var organellesOn: Boolean = true,
     var debug: Boolean = false
 )
@@ -148,12 +146,12 @@ fun cellFillColor(_cell: Cell, params: VoronoiParams, rng: Random): ColorRGBa {
     val s: Double
     val l: Double
     when (params.paletteMode) {
-        PaletteMode.AMBER_GOLD -> {
+        VoronoiPaletteMode.AMBER_GOLD -> {
             h = rng.nextDouble(35.0, 55.0)
             s = rng.nextDouble(0.6, 0.9)
             l = rng.nextDouble(0.4, 0.7)
         }
-        PaletteMode.CELLULAR_GREENS -> {
+        VoronoiPaletteMode.CELLULAR_GREENS -> {
             h = rng.nextDouble(80.0, 160.0)
             s = rng.nextDouble(0.4, 0.8)
             l = rng.nextDouble(0.2, 0.5)
@@ -179,7 +177,7 @@ fun main() = application {
             sites = lloydRelax(sites, safeArea, p.relaxIters)
             val cells = computeVoronoi(sites, safeArea)
             
-            val bgColor = if (p.paletteMode == PaletteMode.AMBER_GOLD) rgb("080808") else rgb("051005")
+            val bgColor = if (p.paletteMode == VoronoiPaletteMode.AMBER_GOLD) rgb("080808") else rgb("051005")
             drawer.clear(bgColor)
             
             drawer.isolated {
@@ -227,7 +225,7 @@ fun main() = application {
             for (data in cellData) {
                 val (cell, contour, _) = data
                 drawer.fill = null
-                drawer.stroke = if (p.paletteMode == PaletteMode.AMBER_GOLD) ColorRGBa.BLACK.opacify(0.8) else ColorRGBa.BLACK.opacify(0.9)
+                drawer.stroke = if (p.paletteMode == VoronoiPaletteMode.AMBER_GOLD) ColorRGBa.BLACK.opacify(0.8) else ColorRGBa.BLACK.opacify(0.9)
                 drawer.strokeWeight = membraneStrokeWidth(cell.area, p, if(export) 4.0 else 1.0)
                 drawer.contour(contour)
                 
@@ -291,8 +289,8 @@ fun main() = application {
         keyboard.keyDown.listen {
             when (it.name) {
                 "r" -> params.seed = Random.nextLong()
-                "1" -> params.paletteMode = PaletteMode.AMBER_GOLD
-                "2" -> params.paletteMode = PaletteMode.CELLULAR_GREENS
+                "1" -> params.paletteMode = VoronoiPaletteMode.AMBER_GOLD
+                "2" -> params.paletteMode = VoronoiPaletteMode.CELLULAR_GREENS
                 "m" -> {
                     val modes = DistributionMode.entries
                     params.distributionMode = modes[(params.distributionMode.ordinal + 1) % modes.size]
