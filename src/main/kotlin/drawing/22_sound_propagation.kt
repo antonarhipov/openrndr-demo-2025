@@ -471,7 +471,7 @@ fun main() = application {
                     
                     val rt = renderTarget(width, height) {
                         colorBuffer()
-                        depthBuffer()
+                        depthBuffer(DepthFormat.DEPTH24_STENCIL8)
                     }
                     
                     drawer.isolatedWithTarget(rt) {

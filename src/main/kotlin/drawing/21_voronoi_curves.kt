@@ -309,7 +309,7 @@ fun main() = application {
 
                     val highRes = renderTarget(width, height) {
                         colorBuffer()
-                        depthBuffer()
+                        depthBuffer(DepthFormat.DEPTH24_STENCIL8)
                     }
                     drawer.isolatedWithTarget(highRes) {
                         renderPoster(this, params, true)

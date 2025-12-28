@@ -913,12 +913,13 @@ fun main() = application {
         // Render target for composition
         val compositeTarget = renderTarget(width, height) {
             colorBuffer(ColorFormat.RGBa, ColorType.FLOAT32)
+            depthBuffer(DepthFormat.DEPTH24_STENCIL8)
         }
         
         // Export render target
         val exportTarget = renderTarget(width, height) {
             colorBuffer()
-            depthBuffer()
+            depthBuffer(DepthFormat.DEPTH24_STENCIL8)
         }
         
         // Font for UI

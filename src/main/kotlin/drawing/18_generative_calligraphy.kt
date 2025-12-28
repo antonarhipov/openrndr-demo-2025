@@ -2270,7 +2270,7 @@ fun main() = application {
         // Render target for high-quality export
         val renderTarget = renderTarget(width, height) {
             colorBuffer()
-            depthBuffer()
+            depthBuffer(DepthFormat.DEPTH24_STENCIL8)
         }
         
         // Font for UI

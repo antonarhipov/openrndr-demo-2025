@@ -401,6 +401,7 @@ class NoiseDrivenStorm(val width: Int, val height: Int) {
 
         val rt = renderTarget(width, height) {
             colorBuffer()
+            depthBuffer(DepthFormat.DEPTH24_STENCIL8)
         }
 
         drawer.isolatedWithTarget(rt) {

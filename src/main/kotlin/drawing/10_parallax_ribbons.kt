@@ -2,6 +2,7 @@ package drawing
 
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
+import org.openrndr.draw.DepthFormat
 import org.openrndr.draw.Drawer
 import org.openrndr.draw.LineCap
 import org.openrndr.draw.isolated
@@ -143,7 +144,7 @@ fun main() = application {
 
         val rt = renderTarget(width, height) {
             colorBuffer()
-            depthBuffer()
+            depthBuffer(DepthFormat.DEPTH24_STENCIL8)
         }
 
         extend {

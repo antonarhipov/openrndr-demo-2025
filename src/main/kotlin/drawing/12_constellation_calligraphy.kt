@@ -386,7 +386,7 @@ fun main() = application {
                 val filename = "constellation_atlas_s${seed}_m${mode}_$timestamp.png"
                 val rt = renderTarget(width, height) {
                     colorBuffer()
-                    depthBuffer()
+                    depthBuffer(DepthFormat.DEPTH24_STENCIL8)
                 }
                 drawer.isolatedWithTarget(rt) {
                     renderScene(this)
