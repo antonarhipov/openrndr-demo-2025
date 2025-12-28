@@ -187,8 +187,8 @@ fun renderFallingGrid(drawer: Drawer, params: FallingGridParams, items: List<Fal
 
 fun main() = application {
     configure {
-        width = 756
-        height = 1020
+        width = 600
+        height = 800
         title = "Falling Grid"
     }
 

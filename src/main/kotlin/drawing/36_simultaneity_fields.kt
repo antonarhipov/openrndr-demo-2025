@@ -298,8 +298,8 @@ class SimultaneityFields(val width: Int, val height: Int) {
 
 fun main() = application {
     configure {
-        width = 900
-        height = 1200
+        width = 800
+        height = 800
         title = "Simultaneity Fields"
     }
 

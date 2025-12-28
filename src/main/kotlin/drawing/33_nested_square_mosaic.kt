@@ -20,7 +20,7 @@ import kotlin.random.Random
 data class MosaicParams(
     val seed: Long = Random.nextLong(),
     val width: Int = 800,
-    val height: Int = 1200,
+    val height: Int = 800,
     var seamMin: Double = 1.0,
     var seamMax: Double = 4.0,
     var microFillPasses: Int = 8,
@@ -259,7 +259,7 @@ class NestedSquareMosaicGenerator(val params: MosaicParams) {
 fun main() = application {
     configure {
         width = 800
-        height = 1200
+        height = 800
         title = "Nested Square Mosaic"
     }
 
