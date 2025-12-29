@@ -159,13 +159,13 @@ class CircuitFloorplan(val params: FloorplanParams) {
         
         return contour {
             moveTo(x + r, y)
-            lineTo(x + w - r, y)
+            if (w > 2 * r) lineTo(x + w - r, y)
             arcTo(r, r, 0.0, false, true, x + w, y + r)
-            lineTo(x + w, y + h - r)
+            if (h > 2 * r) lineTo(x + w, y + h - r)
             arcTo(r, r, 0.0, false, true, x + w - r, y + h)
-            lineTo(x + r, y + h)
+            if (w > 2 * r) lineTo(x + r, y + h)
             arcTo(r, r, 0.0, false, true, x, y + h - r)
-            lineTo(x, y + r)
+            if (h > 2 * r) lineTo(x, y + r)
             arcTo(r, r, 0.0, false, true, x + r, y)
             close()
         }
