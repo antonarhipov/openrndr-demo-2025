@@ -27,8 +27,7 @@ class FourierParams {
     @DoubleParameter("Scale (s)", 0.1, 1.5)
     var s: Double = 1.0
 
-    @IntParameter("Points (N)", 100, 20000)
-    var N: Int = 6000
+    var N: Int = 10000
 
     @BooleanParameter("Open Mode")
     var openMode: Boolean = false
@@ -161,7 +160,7 @@ fun main() = application {
         }
 
         var lastState = ""
-        fun getState() = "${params.seed}-${params.K}-${params.p}-${params.s}-${params.N}-${params.openMode}-${params.driftD}-${params.gammaY}"
+        fun getState() = "${params.seed}-${params.K}-${params.p}-${params.s}-${params.openMode}-${params.driftD}-${params.gammaY}"
 
         regenerate()
         lastState = getState()
@@ -246,7 +245,6 @@ fun main() = application {
                 "1" -> {
                     params.K = 40
                     params.p = 1.6
-                    params.N = 6000
                     params.openMode = true
                     params.driftD = 12.0
                     params.gammaY = 2.0
@@ -301,11 +299,9 @@ fun main() = application {
                     drawer.text("Seed: ${params.seed}", 20.0, 30.0)
                     drawer.text("K: ${params.K}", 20.0, 50.0)
                     drawer.text("p: ${String.format("%.2f", params.p)}", 20.0, 70.0)
-                    drawer.text("N: ${params.N}", 20.0, 90.0)
-                    drawer.text("Points: ${points.size}", 20.0, 110.0)
-                    drawer.text("Open: ${params.openMode}", 20.0, 130.0)
-                    drawer.text("Drift: ${String.format("%.2f", params.driftD)}", 20.0, 150.0)
-                    drawer.text("GammaY: ${String.format("%.2f", params.gammaY)}", 20.0, 170.0)
+                    drawer.text("Open: ${params.openMode}", 20.0, 90.0)
+                    drawer.text("Drift: ${String.format("%.2f", params.driftD)}", 20.0, 110.0)
+                    drawer.text("GammaY: ${String.format("%.2f", params.gammaY)}", 20.0, 130.0)
                 }
             }
         }

@@ -23,8 +23,7 @@ class OUTurtleParams {
     @IntParameter("Scribble Count", 1, 6)
     var scribbleCount: Int = 1
 
-    @IntParameter("Steps (N)", 1000, 10000)
-    var n: Int = 4000
+    var n: Int = 10000
 
     @DoubleParameter("Length (L)", 10.0, 200.0)
     var l: Double = 60.0
@@ -81,7 +80,7 @@ fun main() = application {
         // Storage for generated scribbles
         var scribbles = mutableListOf<List<Vector2>>()
         var lastState = ""
-        fun getState() = "${params.seed}-${params.scribbleCount}-${params.n}-${params.l}-${params.alpha}-${params.sigma}-${params.useDrift}-${params.driftVector}-${params.useAnisotropicScale}-${params.gammaY}"
+        fun getState() = "${params.seed}-${params.scribbleCount}-${params.l}-${params.alpha}-${params.sigma}-${params.useDrift}-${params.driftVector}-${params.useAnisotropicScale}-${params.gammaY}"
 
         fun generateScribbles() {
             Random.seed = params.seed.toString()
@@ -276,9 +275,8 @@ fun main() = application {
                 drawer.text("Seed: ${params.seed}", 20.0, 30.0)
                 drawer.text("Alpha: ${String.format("%.2f", params.alpha)}", 20.0, 50.0)
                 drawer.text("Sigma: ${String.format("%.2f", params.sigma)}", 20.0, 70.0)
-                drawer.text("N: ${params.n}", 20.0, 90.0)
-                drawer.text("L: ${String.format("%.1f", params.l)}", 20.0, 110.0)
-                drawer.text("R: Reseed | 1-3: Presets | T: Tall-mode | B: Background | S/E: Export | D: Debug", 20.0, 130.0)
+                drawer.text("L: ${String.format("%.1f", params.l)}", 20.0, 90.0)
+                drawer.text("R: Reseed | 1-3: Presets | T: Tall-mode | B: Background | S/E: Export | D: Debug", 20.0, 110.0)
             }
         }
     }
