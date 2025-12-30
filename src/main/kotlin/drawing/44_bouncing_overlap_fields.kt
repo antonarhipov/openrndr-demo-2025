@@ -2,8 +2,7 @@ package drawing
 
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
-import org.openrndr.draw.isolatedWithTarget
-import org.openrndr.draw.renderTarget
+import org.openrndr.draw.*
 import org.openrndr.extra.noise.Random
 import org.openrndr.math.Vector2
 import org.openrndr.shape.Circle
@@ -73,6 +72,7 @@ fun main() = application {
 
         val rt = renderTarget(width, height) {
             colorBuffer()
+            depthBuffer(DepthFormat.DEPTH24_STENCIL8)
         }
 
         val palettes = mapOf(

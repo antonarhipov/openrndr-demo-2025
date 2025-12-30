@@ -243,6 +243,7 @@ fun main() = application {
                     val filename = "ou_scribble_${params.seed}_$timestamp.png"
                     val rt = renderTarget(600, 800) {
                         colorBuffer()
+                        depthBuffer(DepthFormat.DEPTH24_STENCIL8)
                     }
                     drawer.isolatedWithTarget(rt) {
                         drawScribbles(this, fitToCanvas(scribbles))
