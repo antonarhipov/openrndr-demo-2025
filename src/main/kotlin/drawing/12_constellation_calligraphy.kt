@@ -36,6 +36,11 @@ data class AtlasConstellation(
     val alphaStar: AtlasStar
 )
 
+data class CometPath(
+    val contour: ShapeContour,
+    val alpha: Double
+)
+
 data class ConstellationParams(
     val tension: Double = 1.0,
     val subsetSizeTarget: Int = 10
@@ -231,10 +236,12 @@ fun main() = application {
         var seed = System.currentTimeMillis()
         var mode = 1 
         var showDebug = false
+        var showComets = false
         var requestExport = false
         
         var stars: List<AtlasStar> = emptyList()
         var constellations: List<AtlasConstellation> = emptyList()
+        var cometPaths: List<CometPath> = emptyList()
         
         val bounds = Rectangle(0.0, 0.0, width.toDouble(), height.toDouble())
         val safeArea = bounds.offsetEdges(-SAFE_MARGIN)
@@ -285,6 +292,40 @@ fun main() = application {
                 3 -> { 
                     // Study grid placeholder
                 }
+            }
+
+            // Generate Comets
+            val cometRng = JRandom(seed + 123)
+            val nComets = 3 + cometRng.nextInt(7) // 3-9
+            cometPaths = List(nComets) {
+                val horizontal = cometRng.nextBoolean()
+                val (p0, p1) = if (horizontal) {
+                    val y1 = cometRng.nextDouble() * height
+                    val y2 = cometRng.nextDouble() * height
+                    if (cometRng.nextBoolean()) {
+                        Pair(Vector2(0.0, y1), Vector2(width.toDouble(), y2))
+                    } else {
+                        Pair(Vector2(width.toDouble(), y1), Vector2(0.0, y2))
+                    }
+                } else {
+                    val x1 = cometRng.nextDouble() * width
+                    val x2 = cometRng.nextDouble() * width
+                    if (cometRng.nextBoolean()) {
+                        Pair(Vector2(x1, 0.0), Vector2(x2, height.toDouble()))
+                    } else {
+                        Pair(Vector2(x1, height.toDouble()), Vector2(x2, 0.0))
+                    }
+                }
+
+                // Add slight curvature
+                var mid = (p0 + p1) * 0.5 + Vector2(cometRng.nextGaussian(), cometRng.nextGaussian()) * 40.0
+                // Ensure the mid point stays within bounds to keep the curve mostly visible
+                mid = Vector2(
+                    mid.x.coerceIn(50.0, width - 50.0),
+                    mid.y.coerceIn(50.0, height - 50.0)
+                )
+                val contour = hobbyCurve(listOf(p0, mid, p1), false).contour
+                CometPath(contour, 0.15 + cometRng.nextDouble() * 0.2)
             }
         }
         
@@ -362,6 +403,18 @@ fun main() = application {
             stars.forEach { drawer.drawStar(it) }
             constellations.forEach { drawer.drawConstellation(it) }
             
+            if (showComets) {
+                drawer.isolated {
+                    drawStyle.clip = safeArea
+                    cometPaths.forEach { cp ->
+                        stroke = ColorRGBa.WHITE.opacify(cp.alpha)
+                        strokeWeight = 1.0
+                        fill = null
+                        contour(cp.contour)
+                    }
+                }
+            }
+            
             drawer.fill = ColorRGBa.WHITE.opacify(0.7)
             drawer.text("CONSTELLATION CALLIGRAPHY ATLAS", 20.0, height - 60.0)
             drawer.text("Seed: $seed | Mode: $mode | Stars: ${stars.size} | Constellations: ${constellations.size}", 20.0, height - 40.0)
@@ -407,6 +460,7 @@ fun main() = application {
                 "2" -> { mode = 2; regenerate() }
                 "3" -> { mode = 3; regenerate() }
                 "d" -> showDebug = !showDebug
+                "s" -> showComets = !showComets
                 "e" -> requestExport = true
             }
         }
