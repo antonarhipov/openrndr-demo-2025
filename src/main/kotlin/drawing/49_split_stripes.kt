@@ -18,16 +18,17 @@ import kotlin.math.*
  * A generative sketch with horizontal stripes, gradient fills, and random slit-swaps.
  */
 
-enum class FillVariant { SOLID, DOT, HATCH, PATTERN }
+enum class FillVariant { SOLID, DOT, HATCH, PATTERN, STIPPLE }
 enum class PalettePreset { 
     MUTED_PAPER, NEON_DARK, OCEANIC,
     CYBERPUNK_NIGHT, DESERT_SUNSET, FOREST_MIST, VINTAGE_POSTER, ARCTIC_ICE,
     LAVA_FLOW, BERRY_GARDEN, GOLDEN_HOUR, MIDNIGHT_GARDEN, COFFEE_SHOP,
     RETRO_FUTURE, SPRING_BLOOM, STORM_CLOUDS, MARS_ROVER, TOKYO_DRIFT,
-    CHALKBOARD, AUTUMN_LEAVES, CANDY_SHOP, SPACE_NEBULA, MONO_NO_AWARE
+    CHALKBOARD, AUTUMN_LEAVES, CANDY_SHOP, SPACE_NEBULA, MONO_NO_AWARE,
+    MONOCHROME
 }
 
-enum class FillVariantMode { SOLID, DOTS, HATCH, PATTERN, RANDOM, GROUPED }
+enum class FillVariantMode { SOLID, DOTS, HATCH, PATTERN, STIPPLE, RANDOM, GROUPED }
 enum class GradientDirection { HORIZONTAL, VERTICAL }
 
 class SplitStripesParams {
@@ -193,6 +194,11 @@ fun main() = application {
                     listOf(rgb("#D1D1D1"), rgb("#B9C4C9"), rgb("#C9B9B9"), rgb("#B9C9B9")),
                     null
                 )
+                PalettePreset.MONOCHROME -> Triple(
+                    ColorRGBa.WHITE,
+                    listOf(ColorRGBa.BLACK, rgb("#333333"), rgb("#666666"), rgb("#999999"), rgb("#CCCCCC")),
+                    ColorRGBa.BLACK
+                )
             }
         }
 
@@ -205,7 +211,7 @@ fun main() = application {
         fun generate() {
             Random.seed = params.seed.toString()
             val newStripes = mutableListOf<StripeData>()
-            val (bg, colors, _) = getPalette(params.palettePreset)
+            val (_, colors, _) = getPalette(params.palettePreset)
             
             var currentY = 0.0
             val baseHeight = height.toDouble() / params.stripeCount
@@ -220,14 +226,16 @@ fun main() = application {
                     FillVariantMode.DOTS -> FillVariant.DOT
                     FillVariantMode.HATCH -> FillVariant.HATCH
                     FillVariantMode.PATTERN -> FillVariant.PATTERN
+                    FillVariantMode.STIPPLE -> FillVariant.STIPPLE
                     FillVariantMode.RANDOM -> Random.pick(FillVariant.entries)
                     FillVariantMode.GROUPED -> {
                         val section = (i.toDouble() / params.stripeCount)
                         when {
-                            section < 0.25 -> FillVariant.SOLID
-                            section < 0.5 -> FillVariant.DOT
-                            section < 0.75 -> FillVariant.HATCH
-                            else -> FillVariant.PATTERN
+                            section < 0.2 -> FillVariant.SOLID
+                            section < 0.4 -> FillVariant.DOT
+                            section < 0.6 -> FillVariant.HATCH
+                            section < 0.8 -> FillVariant.PATTERN
+                            else -> FillVariant.STIPPLE
                         }
                     }
                 }
@@ -357,6 +365,31 @@ fun main() = application {
             }
         }
 
+        fun renderStippleGradient(drawer: Drawer, rect: Rectangle, cA: ColorRGBa, cB: ColorRGBa) {
+            val area = rect.width * rect.height
+            val dotCount = (area * 0.7).toInt().coerceIn(1000, 30000)
+            drawer.stroke = null
+            
+            drawer.fill = cA
+            drawer.rectangle(rect)
+
+            for (i in 0 until dotCount) {
+                val px = Random.double(rect.x, rect.x + rect.width)
+                val py = Random.double(rect.y, rect.y + rect.height)
+                
+                val g = if (params.gradientDirection == GradientDirection.HORIZONTAL) {
+                    (px - rect.x) / rect.width
+                } else {
+                    (py - rect.y) / rect.height
+                }
+                
+                if (Random.double(0.0, 1.0) < g) {
+                    drawer.fill = cB
+                    drawer.circle(px, py, 0.4 + Random.double(0.0, 1.0) * 0.6)
+                }
+            }
+        }
+
         fun renderAll(targetDrawer: Drawer) {
             val (bgColor, _, vignetteColor) = getPalette(params.palettePreset)
 
@@ -370,6 +403,7 @@ fun main() = application {
                         FillVariant.DOT -> renderDotGradient(this, rect, s.colorA, s.colorB)
                         FillVariant.HATCH -> renderHatchGradient(this, rect, s.colorA, s.colorB)
                         FillVariant.PATTERN -> renderPatternGradient(this, rect, s.colorA, s.colorB)
+                        FillVariant.STIPPLE -> renderStippleGradient(this, rect, s.colorA, s.colorB)
                     }
                 }
             }
